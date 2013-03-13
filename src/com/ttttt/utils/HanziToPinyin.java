@@ -37,7 +37,7 @@ public class HanziToPinyin {
     private static final String TAG = "HanziToPinyin";
 
     // Turn on this flag when we want to check internal data structure.
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     /**
      * Unihans array. Each unihans is the first one within same pinyin. Use it
@@ -1226,10 +1226,12 @@ public class HanziToPinyin {
     public ArrayList<Token> get(final String input) {
         ArrayList<Token> tokens = new ArrayList<Token>();
         if (!mHasChinaCollator || TextUtils.isEmpty(input)) {
+        	Log.i(TAG, "return empty tokens.");
             // return empty tokens.
             return tokens;
         }
         final int inputLength = input.length();
+        Log.i(TAG, "inputLength = "+inputLength);
         final StringBuilder sb = new StringBuilder();
         int tokenType = Token.LATIN;
         // Go through the input, create a new token when
@@ -1238,6 +1240,7 @@ public class HanziToPinyin {
         // c. current character is space.
         for (int i = 0; i < inputLength; i++) {
             final char character = input.charAt(i);
+            Log.i(TAG, "character = "+((int)character));
             if (character == ' ') {
                 if (sb.length() > 0) {
                     addToken(sb, tokens, tokenType);

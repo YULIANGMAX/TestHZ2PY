@@ -17,7 +17,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		ArrayList<Token> tokens = HanziToPinyin.getInstance().get("À¬Íø¿¨");
+		ArrayList<Token> tokens = HanziToPinyin.getInstance().get("À¬");
 		StringBuilder sb = new StringBuilder();
 		if (tokens != null && tokens.size() > 0) {
 			for (Token token : tokens) {
