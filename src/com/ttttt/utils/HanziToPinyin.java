@@ -37,7 +37,7 @@ public class HanziToPinyin {
     private static final String TAG = "HanziToPinyin";
 
     // Turn on this flag when we want to check internal data structure.
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     /**
      * Unihans array. Each unihans is the first one within same pinyin. Use it

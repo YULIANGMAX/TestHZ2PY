@@ -1,9 +1,14 @@
 package com.ttttt.testhz2py;
 
-import android.os.Bundle;
+import java.util.ArrayList;
+import java.util.Locale;
+
 import android.app.Activity;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
+
+import com.ttttt.utils.HanziToPinyin;
+import com.ttttt.utils.HanziToPinyin.Token;
 
 public class MainActivity extends Activity {
 
@@ -11,16 +16,20 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		Log.i("xxx", "t1");
-		Log.i("test", "test1");
-
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
+		
+		ArrayList<Token> tokens = HanziToPinyin.getInstance().get("À¬Íø¿¨");
+		StringBuilder sb = new StringBuilder();
+		if (tokens != null && tokens.size() > 0) {
+			for (Token token : tokens) {
+				if (Token.PINYIN == token.type) {
+					sb.append(token.target);
+				} else {
+					sb.append(token.source);
+				}
+			}
+		}
+		String py = sb.toString().toLowerCase(Locale.CHINA);
+		Log.d("HanziToPinyin", py);
 	}
 
 }
