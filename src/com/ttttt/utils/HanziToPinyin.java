@@ -16,13 +16,13 @@
 
 package com.ttttt.utils;
 
-import android.text.TextUtils;
-import android.util.Log;
-
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Locale;
+
+import android.text.TextUtils;
+import android.util.Log;
 
 /**
  * An object to convert Chinese character to its corresponding pinyin string.
@@ -43,8 +43,10 @@ public class HanziToPinyin {
      * Unihans array. Each unihans is the first one within same pinyin. Use it
      * to determine pinyin for all ~20k unihans.
      */
+    // u5140改为4e4c wu乌
+    // u5475改为554a a啊
     public static final char[] UNIHANS = {
-            '\u5475', '\u54ce', '\u5b89', '\u80ae', '\u51f9',
+            '\u554a', '\u54ce', '\u5b89', '\u80ae', '\u51f9',
             '\u516b', '\u6300', '\u6273', '\u90a6', '\u5305', '\u5351', '\u5954', '\u4f3b',
             '\u5c44', '\u8fb9', '\u6807', '\u618b', '\u90a0', '\u69df', '\u7676', '\u5cec',
             '\u5693', '\u5a47', '\u98e1', '\u4ed3', '\u64cd', '\u518a', '\u5d7e', '\u564c',
@@ -87,7 +89,7 @@ public class HanziToPinyin {
             '\u94f4', '\u5932', '\u5fd1', '\u71a5', '\u5254', '\u5929', '\u4f7b', '\u5e16',
             '\u5385', '\u56f2', '\u5077', '\u92c0', '\u6e4d', '\u63a8', '\u541e', '\u6258',
             '\u6316', '\u6b6a', '\u5f2f', '\u5c2a', '\u5371', '\u586d', '\u7fc1', '\u631d',
-            '\u5140', '\u5915', '\u867e', '\u4eda', '\u4e61', '\u7071', '\u4e9b', '\u5fc3',
+            '\u4e4c', '\u5915', '\u867e', '\u4eda', '\u4e61', '\u7071', '\u4e9b', '\u5fc3',
             '\u661f', '\u51f6', '\u4f11', '\u65f4', '\u8f69', '\u75b6', '\u52cb', '\u4e2b',
             '\u6079', '\u592e', '\u5e7a', '\u8036', '\u4e00', '\u6b2d', '\u5e94', '\u54df',
             '\u4f63', '\u4f18', '\u625c', '\u9e22', '\u66f0', '\u6655', '\u531d', '\u707d',
@@ -1156,60 +1158,63 @@ public class HanziToPinyin {
     private Token getToken(char character) {
         Token token = new Token();
         final String letter = Character.toString(character);
-        Log.i(TAG, "letter = "+letter);
+//        Log.i(TAG, "letter = "+letter);
         token.source = letter;
         int offset = -1;
         int cmp;
         if (character < 256) {
-        	Log.i(TAG, "getToken character < 256");
+//        	Log.i(TAG, "getToken character < 256");
             token.type = Token.LATIN;
             token.target = letter;
             return token;
         } else if (character < FIRST_UNIHAN) {
-        	Log.i(TAG, "getToken character < FIRST_UNIHAN = "+FIRST_UNIHAN+"["+((int)FIRST_UNIHAN)+"]"+" 0x"+Integer.toHexString((int)FIRST_UNIHAN));
+//        	Log.i(TAG, "getToken character < FIRST_UNIHAN = "+FIRST_UNIHAN+"["+((int)FIRST_UNIHAN)+"]"+" 0x"+Integer.toHexString((int)FIRST_UNIHAN));
             token.type = Token.UNKNOWN;
             token.target = letter;
             return token;
         } else {
-        	Log.i(TAG, "getToken else");
+//        	Log.i(TAG, "getToken else");
             cmp = COLLATOR.compare(letter, FIRST_PINYIN_UNIHAN);
-            Log.i(TAG, "getToken cmpF = "+cmp);
+//            Log.i(TAG, "getToken cmpF = "+cmp);
             if (cmp < 0) {
-            	Log.i(TAG, "getToken cmpF < 0");
+//            	Log.i(TAG, "getToken cmpF < 0");
                 token.type = Token.UNKNOWN;
                 token.target = letter;
                 return token;
             } else if (cmp == 0) {
-            	Log.i(TAG, "getToken else cmpF == 0");
+//            	Log.i(TAG, "getToken else cmpF == 0");
                 token.type = Token.PINYIN;
                 offset = 0;
             } else {
-            	Log.i(TAG, "getToken else cmpF else");
+//            	Log.i(TAG, "getToken else cmpF else");
                 cmp = COLLATOR.compare(letter, LAST_PINYIN_UNIHAN);
-                Log.i(TAG, "getToken else cmpL = "+cmp);
+//                Log.i(TAG, "getToken else cmpL = "+cmp);
                 if (cmp > 0) {
-                	Log.i(TAG, "getToken else cmpL > 0");
+//                	Log.i(TAG, "getToken else cmpL > 0");
                     token.type = Token.UNKNOWN;
                     token.target = letter;
                     return token;
                 } else if (cmp == 0) {
-                	Log.i(TAG, "getToken else cmpL == 0");
+//                	Log.i(TAG, "getToken else cmpL == 0");
                     token.type = Token.PINYIN;
                     offset = UNIHANS.length - 1;
                 } else {
-                	Log.i(TAG, "getToken else cmpL else");
+//                	Log.i(TAG, "getToken else cmpL else");
 				}
             }
         }
-        Log.i(TAG, "getToken offset = "+offset);
+//        Log.i(TAG, "getToken offset = "+offset);
         token.type = Token.PINYIN;
         if (offset < 0) {
             int begin = 0;
             int end = UNIHANS.length - 1;
             while (begin <= end) {
                 offset = (begin + end) / 2;
+//                Log.i(TAG, "getToken while offset = "+offset);
                 final String unihan = Character.toString(UNIHANS[offset]);
+//                Log.i(TAG, "getToken while unihan = "+unihan+"["+((int)UNIHANS[offset])+"]");
                 cmp = COLLATOR.compare(letter, unihan);
+//                Log.i(TAG, "getToken while cmp = "+cmp);
                 if (cmp == 0) {
                     break;
                 } else if (cmp > 0) {
@@ -1217,6 +1222,7 @@ public class HanziToPinyin {
                 } else {
                     end = offset - 1;
                 }
+//                Log.i(TAG, "getToken while "+begin+"+"+end);
             }
         }
         if (cmp < 0) {
@@ -1224,7 +1230,7 @@ public class HanziToPinyin {
         }
         Log.i(TAG, "getToken while end offset = "+offset);
         StringBuilder pinyin = new StringBuilder();
-        Log.i(TAG, "getToken while end PINYINS["+offset+"].length =  "+PINYINS[offset].length);
+//        Log.i(TAG, "getToken while end PINYINS["+offset+"].length =  "+PINYINS[offset].length);
         for (int j = 0; j < PINYINS[offset].length && PINYINS[offset][j] != 0; j++) {
         	Log.i(TAG, "getToken for PINYINS["+offset+"]["+j+"] = "+(char) PINYINS[offset][j]+"["+PINYINS[offset][j]+"]");
             pinyin.append((char) PINYINS[offset][j]);
@@ -1233,11 +1239,14 @@ public class HanziToPinyin {
         	StringBuilder sBuilder = new StringBuilder();
 			for (int j = 0; j < PINYINS[i].length; j++) {
 				if (PINYINS[i][j]>0) {
-					sBuilder.append(((char)PINYINS[i][j])+" ");
+					sBuilder.append(((char)PINYINS[i][j]));
 				}
-			}
-			Log.i(TAG, sBuilder.toString());
+			} 
+			Log.i(TAG, i+" "+UNIHANS[i]+sBuilder.toString().toLowerCase());
 		}
+//        for (int i = 0; i < UNIHANS.length; i++) {
+//			Log.i(TAG, UNIHANS[i]+""+i);
+//		}
         token.target = pinyin.toString();
         return token;
     }
@@ -1256,7 +1265,7 @@ public class HanziToPinyin {
             return tokens;
         }
         final int inputLength = input.length();
-        Log.i(TAG, "get inputLength = "+inputLength);
+//        Log.i(TAG, "get inputLength = "+inputLength);
         final StringBuilder sb = new StringBuilder();
         int tokenType = Token.LATIN;
         // Go through the input, create a new token when
@@ -1265,28 +1274,28 @@ public class HanziToPinyin {
         // c. current character is space.
         for (int i = 0; i < inputLength; i++) {
             final char character = input.charAt(i);
-            Log.i(TAG, "get character = "+character+"["+((int)character)+"]"+" 0x"+Integer.toHexString((int)character));
+//            Log.i(TAG, "get character = "+character+"["+((int)character)+"]"+" 0x"+Integer.toHexString((int)character));
             if (character == ' ') {
-            	Log.i(TAG, "get character == ' '");
+//            	Log.i(TAG, "get character == ' '");
                 if (sb.length() > 0) {
                     addToken(sb, tokens, tokenType);
                 }
             } else if (character < 256) {
-            	Log.i(TAG, "get character < 256");
+//            	Log.i(TAG, "get character < 256");
                 if (tokenType != Token.LATIN && sb.length() > 0) {
                     addToken(sb, tokens, tokenType);
                 }
                 tokenType = Token.LATIN;
                 sb.append(character);
             } else if (character < FIRST_UNIHAN) {
-            	Log.i(TAG, "get character < FIRST_UNIHAN = "+FIRST_UNIHAN+"["+((int)FIRST_UNIHAN)+"]"+" 0x"+Integer.toHexString((int)FIRST_UNIHAN));
+//            	Log.i(TAG, "get character < FIRST_UNIHAN = "+FIRST_UNIHAN+"["+((int)FIRST_UNIHAN)+"]"+" 0x"+Integer.toHexString((int)FIRST_UNIHAN));
                 if (tokenType != Token.UNKNOWN && sb.length() > 0) {
                     addToken(sb, tokens, tokenType);
                 }
                 tokenType = Token.UNKNOWN;
                 sb.append(character);
             } else {
-            	Log.i(TAG, "get else");
+//            	Log.i(TAG, "get else");
                 Token t = getToken(character);
                 if (t.type == Token.PINYIN) {
                     if (sb.length() > 0) {
@@ -1321,7 +1330,6 @@ public class HanziToPinyin {
      * @param source
      * @return
      */
-
     public String getFullPinYin(String source) {
         if (!Arrays.asList(Collator.getAvailableLocales()).contains(Locale.CHINA)) {
             return source;
@@ -1344,7 +1352,6 @@ public class HanziToPinyin {
      * @param source
      * @return
      */
-
     public String getFirstPinYin(String source) {
         if (!Arrays.asList(Collator.getAvailableLocales()).contains(Locale.CHINA)) {
             return source;
